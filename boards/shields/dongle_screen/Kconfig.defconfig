@@ -52,8 +52,8 @@ endchoice
 config LV_COLOR_16_SWAP
 	default y
 
-config LV_DISP_DEF_REFR_PERIOD
-    default 20
+# LV_DISP_DEF_REFR_PERIOD removed in Zephyr 4.1 (LVGL 9.x)
+# Refresh period is now configured differently in LVGL 9
 
 choice LV_FONT_DEFAULT
     default LV_FONT_DEFAULT_MONTSERRAT_20
