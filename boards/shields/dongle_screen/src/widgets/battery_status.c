@@ -74,7 +74,7 @@ static bool is_peripheral_reconnecting(uint8_t source, uint8_t new_level) {
 }
 
 static void draw_battery(lv_obj_t *canvas, uint8_t level, bool usb_present) {
-    
+
     if (level < 1)
     {
         lv_canvas_fill_bg(canvas, lv_palette_main(LV_PALETTE_RED), LV_OPA_COVER);
@@ -84,14 +84,8 @@ static void draw_battery(lv_obj_t *canvas, uint8_t level, bool usb_present) {
         lv_canvas_fill_bg(canvas, lv_color_white(), LV_OPA_COVER);
     }
 
-    
-    lv_draw_rect_dsc_t rect_fill_dsc;
-    lv_draw_rect_dsc_init(&rect_fill_dsc);
-    rect_fill_dsc.bg_color = lv_color_black();
-
-
-
     // LVGL 9.x requires opacity parameter for lv_canvas_set_px
+    // Draw corner pixels
     lv_canvas_set_px(canvas, 0, 0, lv_color_black(), LV_OPA_COVER);
     lv_canvas_set_px(canvas, 0, 4, lv_color_black(), LV_OPA_COVER);
     lv_canvas_set_px(canvas, 101, 0, lv_color_black(), LV_OPA_COVER);
@@ -99,12 +93,19 @@ static void draw_battery(lv_obj_t *canvas, uint8_t level, bool usb_present) {
 
     if (level <= 99 && level > 0)
     {
-        lv_canvas_draw_rect(canvas, level, 1, 100 - level, 3, &rect_fill_dsc);
+        // LVGL 9.x removed lv_canvas_draw_rect - draw pixels directly instead
+        // Draw filled rectangle from (level, 1) to (99, 3) in black
+        for (int x = level; x < 100; x++) {
+            for (int y = 1; y <= 3; y++) {
+                lv_canvas_set_px(canvas, x, y, lv_color_black(), LV_OPA_COVER);
+            }
+        }
+        // Draw the right edge pixels
         lv_canvas_set_px(canvas, 100, 1, lv_color_black(), LV_OPA_COVER);
         lv_canvas_set_px(canvas, 100, 2, lv_color_black(), LV_OPA_COVER);
         lv_canvas_set_px(canvas, 100, 3, lv_color_black(), LV_OPA_COVER);
     }
-    
+
 }
 
 static void set_battery_symbol(lv_obj_t *widget, struct battery_state state) {
